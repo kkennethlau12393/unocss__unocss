@@ -1,0 +1,34 @@
+# abloh.yml - read from the PR merge base, so changes are reviewed like code.
+# Keys: https://abloh.dev/docs#config
+
+# % of mechanical breaks in changed lines your tests must catch.
+threshold: 70
+
+# true: below threshold fails the check. Blocks merges only if also marked
+# required in branch protection.
+enforce: true
+
+# The job in your own CI that Abloh's step rides. Abloh reads your workflows to
+# pick it and proves the choice by running there; change it to move the step.
+# That job runs once per matrix leg, and matrixLeg is the one it rides. Abloh's
+# step carries an if: that is true on this leg only, so it measures once.
+setup:
+  job: .github/workflows/ci.yml::test
+  matrixLeg:
+    node_version: 22
+    os: ubuntu-latest
+  failFast: add # add: that job's matrix cancels every leg when one fails, so Abloh wrote fail-fast: false into it beside its own step
+
+# Rebuild recipe for the proof container. Comments name the source file.
+environment:
+  runtimeImage: node:22.23.1-bookworm-slim@sha256:6c74791e557ce11fc957704f6d4fe134a7bc8d6f5ca4403205b2966bd488f6b3 # reviewed Node 22 image (your CI's own Node, node >=22 in package.json, and a .nvmrc would outrank it)
+  installDirectory: .
+  setup: .abloh/setup.sh # written by init and yours to edit. Every cold run executes it step by step
+  testCommand: corepack pnpm test # scripts.test in package.json
+  identityFiles: # a change here triggers reinstall instead of container reuse
+    - pnpm-workspace.yaml
+    - turbo.json
+  rewrittenFiles: # committed files your own install rewrites; measured as your install left them
+    # Your corepack pnpm install --frozen-lockfile rewrote the committed file
+    # packages-presets/preset-icons/src/collections.ts in a clean checkout.
+    - packages-presets/preset-icons/src/collections.ts
