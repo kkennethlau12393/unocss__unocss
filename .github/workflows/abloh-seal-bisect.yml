@@ -1,7 +1,7 @@
-name: abloh seal ci probe
+name: abloh seal worktree probe 2
 on:
   push:
-    branches: [abloh-seal-ci-probe]
+    branches: [abloh-seal-wt-probe2]
 jobs:
   probe:
     runs-on: ubuntu-latest
@@ -16,12 +16,12 @@ jobs:
       - run: pnpm install
       - run: pnpm build
       - run: pnpm test
-      - name: ci probe
-        run: bash .abloh-seal-bisect/ci-probe.sh 2>&1 | tee "$RUNNER_TEMP/ci-probe-summary.txt"
+      - name: worktree probe 2
+        run: bash .abloh-seal-bisect/wt-probe2.sh 2>&1 | tee "$RUNNER_TEMP/wt-probe2-summary.txt"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: seal-ci-probe-unocss
+          name: seal-wt-probe2-unocss
           path: |
-            ${{ runner.temp }}/ci-probe
-            ${{ runner.temp }}/ci-probe-summary.txt
+            ${{ runner.temp }}/wt-probe2
+            ${{ runner.temp }}/wt-probe2-summary.txt
