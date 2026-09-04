@@ -1,0 +1,26 @@
+name: abloh seal bisect
+on:
+  push:
+    branches: [abloh-seal-bisect]
+  workflow_dispatch:
+jobs:
+  bisect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm build
+      - name: seal bisect
+        run: |
+          bash .abloh-seal-bisect/workflow-common.sh unocss "node:22.23.1-bookworm-slim@sha256:6c74791e557ce11fc957704f6d4fe134a7bc8d6f5ca4403205b2966bd488f6b3" "corepack enable && corepack prepare pnpm@11.24.0 --activate" "npx --no-install vitest run --reporter=json" c-plain c-full c-full-nomem c-full-nopids c-full-net c-full-caps c-full-noinit c-full-noswap c-full-mem8g c-plain-warm c-full-warm
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seal-bisect-unocss
+          path: ${{ runner.temp }}/seal-bisect
