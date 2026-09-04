@@ -1,0 +1,27 @@
+name: abloh seal replay
+on:
+  push:
+    branches: [abloh-seal-replay]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm build
+      - run: pnpm test
+      - name: replay abloh
+        run: bash .github/abloh-replay/replay.sh 3caf692975c912d633c7c9e68a081971e981d3ec
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: seal-replay-unocss
+          path: ${{ runner.temp }}/abloh-replay
