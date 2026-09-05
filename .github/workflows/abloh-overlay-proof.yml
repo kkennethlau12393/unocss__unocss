@@ -1,0 +1,39 @@
+name: abloh overlay workspace proof
+on:
+  push:
+    branches: [abloh-overlay-proof]
+  workflow_dispatch:
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install
+      - run: pnpm build
+      - name: stage the proof driver
+        run: bash .abloh-overlay-proof/setup.sh
+      - name: overlay against image, cold cache before every arm, interleaved
+        working-directory: ${{ runner.temp }}/overlay-proof
+        env:
+          PROOF_COLD: "1"
+          PROOF_KEY: unocss
+          PROOF_REPO_DIR: ${{ github.workspace }}
+          PROOF_IMAGE: "node:22.23.1-bookworm-slim@sha256:6c74791e557ce11fc957704f6d4fe134a7bc8d6f5ca4403205b2966bd488f6b3"
+          PROOF_PM: "pnpm@11.24.0"
+          PROOF_TEST_ARGV: '["npx","--no-install","vitest","run","--reporter=json"]'
+          PROOF_RUNNER: "vitest"
+          PROOF_OUT: ${{ runner.temp }}/overlay-proof/result.json
+        run: node driver.mjs 2>&1 | tee ${{ runner.temp }}/overlay-proof/summary.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: overlay-proof-unocss
+          path: |
+            ${{ runner.temp }}/overlay-proof/result.json
+            ${{ runner.temp }}/overlay-proof/summary.txt

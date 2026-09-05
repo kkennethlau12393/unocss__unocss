@@ -1,0 +1,34 @@
+{
+  "name": "@abloh/marigold",
+  "version": "0.1.0",
+  "description": "Marigold: the engine that writes test proposals. Tierless kill-matrix fix loop, light check and exit proof. \"name\" will publish under the @abloh scope.",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE",
+  "engines": {
+    "node": ">=20.6"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./preload": "./dist/replay-preload.mjs",
+    "./replay": {
+      "types": "./dist/replay/index.d.ts",
+      "import": "./dist/replay/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@abloh/core": "*",
+    "@mswjs/interceptors": "0.42.3",
+    "typescript": "^5.9.3",
+    "undici": "^7"
+  }
+}

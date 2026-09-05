@@ -1,0 +1,11 @@
+{
+  "name": "abloh-overlay-proof",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "typescript": "5.9.3",
+    "yaml": "^2.5.0",
+    "undici": "^7",
+    "@mswjs/interceptors": "0.42.3"
+  }
+}
