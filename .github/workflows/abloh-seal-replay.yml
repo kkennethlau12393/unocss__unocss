@@ -1,7 +1,7 @@
-name: abloh seal replay
+name: abloh seal pnpm fix
 on:
   push:
-    branches: [abloh-seal-replay]
+    branches: [abloh-seal-pnpm-fix]
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -23,5 +23,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: seal-replay-unocss
+          name: seal-pnpm-fix-unocss
           path: ${{ runner.temp }}/abloh-replay
